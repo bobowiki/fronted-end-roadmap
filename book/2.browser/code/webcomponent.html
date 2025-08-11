@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <template id="echo-component">
+      <style>
+        .name {
+          color: red;
+        }
+      </style>
+      <button onclick="echo()">echo button</button>
+      <script>
+        function echo() {
+          window.alert("echo");
+        }
+      </script>
+    </template>
+    <script>
+      class EchoComponent extends HTMLElement {
+        constructor() {
+          super();
+          const template = document.getElementById("echo-component");
+          console.log(template, "template");
+          const clone = template.content.cloneNode(true);
+          this.attachShadow({ mode: "open" }).appendChild(clone);
+        }
+      }
+      customElements.define("echo-component", EchoComponent);
+    </script>
+    <echo-component></echo-component>
+    <echo-component></echo-component>
+    text
+  </body>
+</html>
