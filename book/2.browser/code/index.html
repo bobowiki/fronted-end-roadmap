@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    // var a = 2;
+    // function add(b, c) {
+    //   console.trace();
+    //   return b + c;
+    // }
+    // function addAll(b, c) {
+    //   var d = 10;
+    //   result = add(b, c);
+    //   return a + result + d;
+    // }
+    // addAll(3, 6);
+    // function division(a, b) {
+    //   return division(a, b);
+    // }
+    // console.log(division(1, 2));
+    // function foo() {
+    //   for (var i = 0; i < 7; i++) {
+    //     console.log(i);
+    //   }
+    //   console.log(i, "outer");
+    // }
+    // foo();
+    // let myname = "极客时间";
+    // {
+    //   console.log(myname);
+    //   let myname = "极客邦";
+    // }
+
+    // function bar() {
+    //   var myName = "极客世界";
+    //   let test1 = 100;
+    //   if (1) {
+    //     let myName = "Chrome浏览器";
+    //     console.log(test);
+    //   }
+    // }
+    // function foo() {
+    //   var myName = "极客邦";
+    //   let test = 2;
+    //   {
+    //     let test = 3;
+    //     bar();
+    //   }
+    // }
+    // var myName = "极客时间";
+    // let myAge = 10;
+    // let test = 1;
+    // foo();
+    // function foo() {
+    //   var myName = "极客时间";
+    //   let test1 = 1;
+    //   const test2 = 2;
+    //   var innerBar = {
+    //     getName: function () {
+    //       console.log(test1);
+    //       return myName;
+    //     },
+    //     setName: function (newName) {
+    //       myName = newName;
+    //     },
+    //   };
+    //   return innerBar;
+    // }
+    // var bar = foo();
+    // bar.setName("极客邦");
+    // bar.getName();
+    // console.log(bar.getName());
+    // var bar = {
+    //   myName: "time.geekbang.com",
+    //   printName: function () {
+    //     console.log(myName);
+    //   },
+    // };
+    // function foo() {
+    //   let myName = "极客时间";
+    //   return bar.printName;
+    // }
+    // let myName = "极客邦";
+    // let _printName = foo();
+    // _printName();
+    // bar.printName();
+    // function bar() {
+    //   console.log("bar");
+    // }
+    // function foo() {
+    //   setTimeout(bar, 0);
+    //   for (let i = 0; i < 5000; i++) {
+    //     let i = 5 + 8 + 8 + 8;
+    //     console.log(i);
+    //   }
+    // }
+    // foo();
+    // function cb() {
+    //   setTimeout(cb, 0);
+    // }
+    // setTimeout(cb, 0);;
+    // function timerCallback2() {
+    //   console.log(2);
+    // }
+    // function timerCallback() {
+    //   console.log(1);
+    //   setTimeout(timerCallback2, 0);
+    // }
+    // setTimeout(timerCallback, 0);
+    function executor(resolve, reject) {
+      let rand = Math.random();
+      console.log(1);
+      console.log(rand);
+      if (rand > 0.5) resolve();
+      else reject();
+    }
+    var p0 = new Promise(executor);
+
+    var p1 = p0.then((value) => {
+      console.log("succeed-1");
+      return new Promise(executor);
+    });
+
+    var p3 = p1.then((value) => {
+      console.log("succeed-2");
+      return new Promise(executor);
+    });
+
+    var p4 = p3.then((value) => {
+      console.log("succeed-3");
+      return new Promise(executor);
+    });
+
+    p4.catch((error) => {
+      console.log("error");
+    });
+    console.log(2);
+  </script>
+</html>

@@ -1,0 +1,6 @@
+{
+  "markdown.copyFiles.destination": {
+    "**/*.md": "${documentDirName}/assets/${fileName}"
+  },
+  "markdown.editor.filePaste.copyIntoWorkspace": "mediaFiles"
+}
