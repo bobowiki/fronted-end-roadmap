@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="button">按我</button>
+    <button id="button1">按我</button>
+</body>
+
+<script>
+    const effectStack = [];
+    function clean(effect) {
+        if (effect.deps) {
+            for (const dep of [...effect.deps]) {
+                dep.delete(effect);
+            }
+            effect.deps.clear();
+        }
+    }
+    function useState(value, id) {
+        document.getElementById(id).innerText = "按我" + value
+        const subs = new Set()
+        function getter() {
+            const effect = effectStack[effectStack.length - 1];
+            if (effect) {
+                subs.add(effect);
+                effect.deps.add(subs);
+            }
+            return value
+        }
+        function setter(newValue) {
+            value = newValue;
+            // 复制subs，如果不复制effect.execute();会修改subs会导致遍历器的内部状态会混乱
+            for (const effect of [...subs]) {
+                effect.execute();
+            }
+            document.getElementById(id).innerText = "按我" + value
+        }
+        return [getter, setter];
+    }
+
+    function useEffect(callback) {
+        const effect = {
+            deps: new Set(),
+            execute,
+        }
+
+        function execute() {
+            clean(effect)
+            effectStack.push(effect);
+            try {
+                callback()
+            } finally {
+                effectStack.pop();
+            }
+        }
+
+        effect.execute()
+    }
+
+
+    const [state, setState] = useState(1, 'button')
+    const [state1, setState1] = useState(1, "button1")
+
+    document.getElementById('button').onclick = () => {
+        setState(state() + 1)
+    }
+
+    document.getElementById('button1').onclick = () => {
+        setState1(state1() + 1)
+    }
+
+    useEffect(() => {
+        console.log("effect1", state());
+    })
+
+    useEffect(() => {
+        console.log("effect2", state1());
+    })
+
+    /*
+    1. 执行useState时，返回getter和setter，
+    2. 执行useEffect时，会执行execute，execute先清除effect所有的依赖，同时会将subs里关于之前的effect删除，effect.deps清空
+    3. 执行callback时，会执行state()，会将当前effect添加到subs里，同时也会将subs添加到effect.deps里，等待setter触发
+    4. 点击按钮时，会触发setter，从而更新state，导致重新执行effect.execute
+    5. 重新执行effect时，先清除effect所有的依赖，同时会将subs里关于之前的effect删除
+    6. 执行callback时，会执行state()，会将当前effect添加到subs里，同时也会将subs添加到effect.deps里，等待setter触发
+    7. 重复5-6
+    8. 这样就实现了自动依赖收集
+    */
+
+    /*
+    effect 是对象，不会因 clean 而被销毁；clean 只清空它记录的依赖集合（effect.deps）并从各 subs 中移除引用。
+execute 函数是定义在 useEffect 作用域内的闭包，闭包捕获了当时创建的 effect 对象，后续调用 effect.execute() 仍然操作同一个对象引用。
+effectStack 只是执行期间的临时栈；长期持久的是 subs（每个状态的 Set）对 effect 的引用。只要 subs 里还存在 effect，它就不会被 GC。
+如果你在每次“渲染”都重新调用 useEffect，就会每次创建新的 effect（需要显式清理旧的或用 hook 索引/缓存避免重复创建）。
+    */
+
+
+
+</script>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>React Demo</title>
+    <!-- 引入 React 和 ReactDOM（使用官方 CDN） -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- 引入 Babel，用于支持 JSX 语法 -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <!-- 这里写 React 代码 -->
+    <script type="text/babel">
+        function App() {
+            const len = 3000
+            return (
+                <div>
+                    {Array.from({ length: len }).map((_, index) => (
+                        <div key={index}>Item {index + 1}</div>
+                    ))}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

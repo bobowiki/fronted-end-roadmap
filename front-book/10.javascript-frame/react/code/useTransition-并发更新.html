@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>React Demo</title>
+    <!-- 引入 React 和 ReactDOM（使用官方 CDN） -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- 引入 Babel，用于支持 JSX 语法 -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <!-- 这里写 React 代码 -->
+    <script type="text/babel">
+        // import { useState, useTransition } from "react";
+
+        function SlowList({ text }) {
+            const items = Array.from({ length: 10000 }, (_, i) => `${text} - Item ${i}`);
+            return (
+                <ul>
+                    {items.map((item, i) => (
+                        <li key={i}>{item}</li>
+                    ))}
+                </ul>
+            );
+        }
+
+        function App() {
+            const [text, setText] = React.useState("");
+            const [search, setSearch] = React.useState("");
+            const [isPending, startTransition] = React.useTransition();
+
+            const handleChange = (e) => {
+                const value = e.target.value;
+                setText(value); // 高优先级：立即更新输入框
+
+                startTransition(() => {
+                    setSearch(value); // 低优先级：延后渲染大列表
+                });
+            };
+
+            return (
+                <div>
+                    <h2>⚙️ 使用 useTransition</h2>
+                    <input value={text} onChange={handleChange} placeholder="输入点什么" />
+                    {isPending && <p>列表加载中...</p>}
+                    <SlowList text={search} />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

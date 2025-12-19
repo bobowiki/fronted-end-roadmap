@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="btn">点击</button>
+    <script>
+
+        const effectStack = [];
+        const clean = (effect) => {
+            if (effect.deps) {
+                for (const dep of [...effect.deps]) {
+                    dep.delete(effect);
+                }
+                effect.deps.clear();
+            }
+        }
+        function useState(value) {
+            const deps = new Set()
+            function getter() {
+                const currentEffect = effectStack[effectStack.length - 1];
+                if (currentEffect) {
+                    deps.add(currentEffect)
+                    currentEffect.deps.add(deps)
+                }
+
+                return value
+            }
+            function setter(newValue) {
+                if (newValue !== value) {
+                    value = newValue
+                    const items = [...deps]
+                    for (const dep of items) {
+                        dep?.execute();
+                    }
+                }
+            }
+            return [getter, setter]
+        }
+
+        function useEffect(callback) {
+            const effect = {
+                deps: new Set(),
+                execute,
+            }
+            function execute() {
+                clean(effect)
+                effectStack.push(effect);
+                try {
+                    callback()
+                } finally {
+                    effectStack.pop();
+                }
+            }
+
+            execute()
+        }
+        const [getter, setter] = useState(0)
+
+
+        useEffect(() => {
+            console.log('effect', getter());
+        })
+
+        document.getElementById('btn').onclick = () => {
+            setter(getter() + 1)
+        }
+        // 当执行useEffect的时候，会为当前的useEffect创建一个effect对象，并将其压入effectStack栈中，形成了当前函数effect的执行上下文，由于会默认执行一次execute
+        // 会默认执行一次callback，从而调用getter函数，从而将当前的effect对象添加到getter函数的deps中，从而形成依赖收集
+        // 当调用setter函数时，会修改value的值，并遍历deps中的effect对象，调用其execute方法，从而重新执行callback函数，形成响应式更新
+        // 每一个useState都会创建一个独立的subs集合，从而实现状态的独立管理
+    </script>
+</body>
+
+</html>

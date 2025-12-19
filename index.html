@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button class="btn">按我</button>
+    <script>
+      const effectStack = [];
+      function cleanup(effect) {
+        if (effect) {
+          for (const subs of [...effect.deps]) {
+            subs.delete(effect);
+          }
+          effect.deps.clear();
+        }
+      }
+      function useState(value) {
+        const subs = new Set();
+        function getter() {
+          if (effectStack.length) {
+            const effect = effectStack[effectStack.length - 1];
+            subs.add(effect);
+            effect.deps.add(subs);
+          }
+          return value;
+        }
+        function setter(newVal) {
+          if (value === newVal) return;
+          value = newVal;
+          const subsArray = [...subs];
+          for (let effect of subsArray) {
+            effect.excute();
+          }
+        }
+        return [getter, setter];
+      }
+
+      function useEffect(callback) {
+        const effect = {
+          deps: new Set(),
+          excute,
+        };
+        function excute() {
+          cleanup(effect);
+          effectStack.push(effect);
+          callback();
+        }
+        effect.excute();
+      }
+
+      const [getter, setter] = useState(0);
+
+      document.querySelector(".btn").onclick = () => {
+        setter(getter() + 1);
+      };
+
+      useEffect(() => {
+        console.log("Effect run:", getter());
+      });
+    </script>
+  </body>
+</html>

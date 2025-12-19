@@ -1,0 +1,20 @@
+{
+  "name": "ssr-react",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:client": "rsbuild build --config rsbuild.config.js",
+    "build:server": "rsbuild build --config rsbuild.server.config.js",
+    "build:ssr": "pnpm build:client && pnpm build:server"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^1.5.14",
+    "@rsbuild/plugin-react": "^1.4.1"
+  }
+}

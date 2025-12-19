@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>2025年CSS新特性演示</h1>
+    <nav style="margin-bottom:2em;">
+        <strong>快速导航：</strong>
+        <a href="#invoker">Invoker Commands</a> |
+        <a href="#has">:has()</a> |
+        <a href="#color-mix">color-mix()</a> |
+        <a href="#varfont">变量字体</a> |
+        <a href="#anchor">锚定位</a> |
+        <a href="#subgrid">Subgrid</a> |
+        <a href="#scope">@scope</a> |
+        <a href="#popover">Popover</a> |
+        <a href="#dialog">Dialog</a>
+    </nav>
+    <section>
+        <section id="invoker">
+            <h2>Invoker Commands（调用命令）</h2>
+            <div style="color:#555;margin-bottom:0.5em;">
+                <strong>简介：</strong> 允许直接在HTML元素上用<code>command</code>属性声明交互命令，无需JS即可实现常见交互。
+            </div>
+            <div style="color:#555;margin-bottom:0.5em;">
+                <strong>用法：</strong>
+                <ul style="margin:0 0 0.5em 1.5em;padding:0;font-size:1em;">
+                    <li>在元素上添加 <code>command</code> 属性，如 <code>&lt;button command="alert('hi')"&gt;</code></li>
+                    <li>可配合 <code>commandtarget</code> 指定目标，如 <code>command="toggle" commandtarget="#id"</code></li>
+                    <li>浏览器原生支持时无需JS，当前演示自动降级为JS实现</li>
+                </ul>
+            </div>
+            <div>
+                <button id="cmd-btn" command="alert('你触发了命令！')">点击触发命令</button>
+                <button id="cmd-btn2" command="toggle" commandtarget="#cmd-target">切换下方高亮</button>
+                <div id="cmd-target" style="margin-top:1em;padding:1em;border:1px solid #ccc;">命令目标区域</div>
+            </div>
+            <p style="color:#888;font-size:0.95em;">（注：Invoker Commands 允许通过 <code>command</code>
+                属性直接在HTML元素上声明行为，浏览器原生支持，无需JS）</p>
+            <style>
+                #cmd-target.active {
+                    background: #e3f2fd;
+                    border-color: #1976d2;
+                }
+            </style>
+        </section>
+        <h2 id="has">:has() 选择器</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> <code>:has()</code> 是父选择器，可根据子元素状态选中父元素。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>div:has(input:checked)</code> 选中包含已勾选input的div。
+        </div>
+        <div id="has-demo" style="border:1px solid #ccc;padding:1em;cursor:pointer;">
+            <input type="checkbox"> 点我试试（父元素会高亮）
+        </div>
+        <style>
+            #has-demo:has(input:checked) {
+                background: #e0ffe0;
+                border-color: #4caf50;
+            }
+
+            #has-demo.active {
+                outline: 2px solid #2196f3;
+            }
+        </style>
+    </section>
+
+    <section>
+        <h2 id="color-mix">color-mix() 颜色混合</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> <code>color-mix()</code> 可在CSS中直接混合两种颜色，支持多色空间。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>background: color-mix(in srgb, red 50%, blue)</code>
+        </div>
+        <div style="display:flex;align-items:center;gap:1em;">
+            <input id="color-mix-range" type="range" min="0" max="100" value="50">
+            <div id="color-mix-box"
+                style="width:60px;height:30px;background:color-mix(in srgb, red 50%, blue);border:1px solid #ccc;">
+            </div>
+            <span>red <span id="color-mix-val">50</span>% + blue</span>
+        </div>
+        <script>
+            // 实时显示range值
+            document.getElementById('color-mix-range').addEventListener('input', function () {
+                document.getElementById('color-mix-val').textContent = this.value;
+            });
+        </script>
+    </section>
+
+    <section>
+        <h2 id="varfont">变量字体（Variable Font）</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> 变量字体允许通过CSS属性动态调整字体粗细、宽度、斜体等。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>font-variation-settings</code> 或直接调节
+            <code>font-size</code>、<code>font-weight</code>。
+        </div>
+        <input id="font-range" type="range" min="12" max="72" value="32">
+        <span>字体大小: <span id="font-size-val">32</span>px</span>
+        <div id="var-text" style="--font-size:32px;font-size:var(--font-size);font-family:'InterVariable',sans-serif;">
+            可变字体演示 ABCabc123</div>
+        <style>
+            @font-face {
+                font-family: 'InterVariable';
+                src: url('https://rsms.me/inter/font-files/InterVariable.woff2') format('woff2');
+                font-weight: 100 900;
+                font-display: swap;
+            }
+        </style>
+        <script>
+            document.getElementById('font-range').addEventListener('input', function () {
+                document.getElementById('var-text').style.setProperty('--font-size', this.value + 'px');
+                document.getElementById('font-size-val').textContent = this.value;
+            });
+        </script>
+    </section>
+
+    <section>
+        <h2 id="anchor">锚定位（anchor positioning）</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> 可让弹窗、气泡等元素锚定到其它元素，自动对齐。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>&lt;div popover anchor="anchor-btn"&gt;</code> 让弹窗锚定按钮。
+        </div>
+        <div style="position:relative;height:100px;background:#f9f9f9;">
+            <button id="anchor-btn" style="position:absolute;left:20px;top:40px;">锚点按钮</button>
+            <div id="anchor-pop" popover anchor="anchor-btn" style="padding:1em;background:#fff;border:1px solid #ccc;">
+                我是跟随按钮的popover</div>
+        </div>
+        <button onclick="document.getElementById('anchor-pop').showPopover()">显示 Popover</button>
+        <style>
+            [popover] {
+                box-shadow: 0 2px 8px #0002;
+            }
+        </style>
+    </section>
+
+    <section>
+        <h2 id="subgrid">Subgrid</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> 子网格允许嵌套网格继承父网格轨道，实现更复杂的布局。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>grid-template-rows: subgrid</code>。
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:1em;background:#f0f0f0;padding:1em;width:400px;">
+            <div style="background:#fff;padding:1em;">
+                <div style="display:grid;grid-template-rows:subgrid;grid-row:span 2;">
+                    <div style="background:#e3f2fd;">子网格1</div>
+                    <div style="background:#bbdefb;">子网格2</div>
+                </div>
+            </div>
+            <div style="background:#fff;padding:1em;">
+                <div style="display:grid;grid-template-rows:subgrid;grid-row:span 2;">
+                    <div style="background:#ffe0b2;">子网格A</div>
+                    <div style="background:#ffcc80;">子网格B</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 id="scope">@scope 局部样式作用域</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> <code>@scope</code> 可限定样式只作用于特定区域，防止全局污染。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>@scope (#scope-demo) { ... }</code>
+        </div>
+        <div id="scope-demo">
+            <button>普通按钮</button>
+            <button class="scoped">局部高亮按钮</button>
+        </div>
+        <style>
+            @scope (#scope-demo) {
+                .scoped {
+                    background: #ffecb3;
+                    color: #d84315;
+                    border: 1px solid #ff9800;
+                }
+            }
+        </style>
+    </section>
+
+    <section>
+        <h2 id="popover">:popover 伪类</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> <code>:popover-open</code> 伪类可选中已打开的popover弹窗。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>#pop-demo:popover-open</code>。
+        </div>
+        <button popovertarget="pop-demo">显示Popover</button>
+        <div id="pop-demo" popover style="padding:1em;background:#fff;border:1px solid #ccc;">Popover内容</div>
+        <style>
+            #pop-demo:popover-open {
+                outline: 2px solid #2196f3;
+            }
+        </style>
+    </section>
+
+    <section>
+        <h2 id="dialog">原生 dialog 元素</h2>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>简介：</strong> <code>&lt;dialog&gt;</code> 元素用于实现原生对话框，支持模态、无障碍等。
+        </div>
+        <div style="color:#555;margin-bottom:0.5em;">
+            <strong>用法：</strong> <code>&lt;dialog open&gt;内容&lt;/dialog&gt;</code>，可用JS或Invoker Commands控制显示/关闭。
+        </div>
+        <dialog id="my-dialog">i am a dialog <button commandfor="my-dialog" command="close">关闭</button></dialog>
+        <button commandfor="my-dialog">show dialog</button>
+    </section>
+
+    <script src="2025css-demo.js"></script>
+    <script>
+        // Polyfill/演示 Invoker Commands 行为（如浏览器暂不支持）
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     document.querySelectorAll('[command]').forEach(btn => {
+        //         const cmd = btn.getAttribute('command');
+        //         if (cmd === 'toggle') {
+        //             btn.addEventListener('click', () => {
+        //                 const targetSel = btn.getAttribute('commandtarget');
+        //                 const target = document.querySelector(targetSel);
+        //                 if (target) target.classList.toggle('active');
+        //             });
+        //         } else {
+        //             btn.addEventListener('click', () => {
+        //                 try {
+        //                     // 仅演示用，实际浏览器实现会更安全
+        //                     // eslint-disable-next-line no-eval
+        //                     eval(cmd);
+        //                 } catch (e) { alert('命令执行失败'); }
+        //             });
+        //         }
+        //     });
+        // });
+    </script>
+</body>
+
+</html>

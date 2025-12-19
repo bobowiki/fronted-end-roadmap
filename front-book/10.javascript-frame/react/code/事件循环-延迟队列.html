@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function sayHello() {
+            console.log("Hello, world!");
+        }
+        function test() {
+            setTimeout(sayHello, 0)
+            console.time("test")
+            for (let i = 0; i < 5000; i++) {
+                // 模拟耗时操作
+                console.log(i)
+            }
+            console.timeEnd("test")
+        }
+        test()
+    </script>
+</body>
+
+</html>
