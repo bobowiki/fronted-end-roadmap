@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="
+      width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      minimum-scale=1.0,
+      user-scalable=no
+    " />
+  <title>H5 Rem 响应式示例</title>
+
+  <style>
+    /* ======================
+       Reset & Base
+    ====================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 100px;
+      /* 会被 JS 覆盖 */
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      /* 字体不使用 rem（线上经验） */
+      background: #f6f7f9;
+      color: #333;
+    }
+
+    /* ======================
+       Layout
+    ====================== */
+    .page {
+      max-width: 540px;
+      /* 防止 iPad / PC 崩 */
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .header {
+      height: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+    }
+
+    .content {
+      flex: 1;
+      padding: 0.24rem;
+    }
+
+    .card-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.24rem;
+    }
+
+    .card {
+      width: calc(50% - 0.12rem);
+      background: #f2f3f5;
+      border-radius: 0.16rem;
+      padding: 0.24rem;
+    }
+
+    .card-title {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .footer {
+      height: 0.98rem;
+      padding-bottom: env(safe-area-inset-bottom);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid #eee;
+      background: #fff;
+    }
+
+    .btn {
+      width: 90%;
+      height: 0.72rem;
+      background: #1677ff;
+      color: #fff;
+      border-radius: 0.36rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="header">Rem 响应式 H5</div>
+
+    <div class="content">
+      <div class="card-list">
+        <div class="card">
+          <div class="card-title">商品 A</div>
+          <div class="card-desc">描述信息</div>
+        </div>
+        <div class="card">
+          <div class="card-title">商品 B</div>
+          <div class="card-desc">描述信息</div>
+        </div>
+        <div class="card">
+          <div class="card-title">商品 C</div>
+          <div class="card-desc">描述信息</div>
+        </div>
+        <div class="card">
+          <div class="card-title">商品 D</div>
+          <div class="card-desc">描述信息</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="btn">立即订阅</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const BASE_WIDTH = 390;
+
+      function setRem() {
+        const doc = document.documentElement;
+        let width = doc.clientWidth;
+
+        // 限制最大宽度（真实线上必做）
+        if (width > 540) width = 540;
+        // 设置根元素字体大小 也就是1rem = 100px，如果宽度是375px，那么1rem=100px；如果宽度是750px，那么1rem=200px
+        doc.style.fontSize = (width / BASE_WIDTH) * 100 + 'px';
+      }
+
+      setRem();
+      window.addEventListener('resize', setRem);
+      window.addEventListener('orientationchange', setRem);
+    })();
+  </script>
+</body>
+
+</html>

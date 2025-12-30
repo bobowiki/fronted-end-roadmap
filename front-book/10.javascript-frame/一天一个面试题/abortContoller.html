@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="start">开始</button>
+    <button id="cancel">取消</button>
+</body>
+<script>
+    const startBtn = document.getElementById('start');
+    const cancelBtn = document.getElementById('cancel');
+
+    let controller;
+
+    startBtn.onclick = () => {
+        controller = new AbortController();
+        const signal = controller.signal;
+
+        // 自定义一个可中断的延迟 Promise
+        function delay(ms, signal) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    resolve('延迟完成');
+                }, ms);
+                if (signal) {
+                    signal.addEventListener('abort', () => {
+                        clearTimeout(timer);
+                        reject(new DOMException('Aborted', 'AbortError'));
+                    });
+                }
+            });
+        }
+
+        delay(5000, signal)
+            .then(data => {
+                console.log('操作成功:', data);
+            })
+            .catch(err => {
+                if (err.name === 'AbortError') {
+                    console.log('操作被取消');
+                } else {
+                    console.error('操作失败:', err);
+                }
+            });
+    };
+
+    cancelBtn.onclick = () => {
+        if (controller) {
+            controller.abort();
+        }
+    };
+</script>
+
+</html>

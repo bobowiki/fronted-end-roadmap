@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function timeout(ms) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ timeout: true });
+                }, ms);
+            });
+        }
+        function fetchData() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ name: 'zhangsan' });
+                }, 1000);
+            });
+        }
+        Promise.race([timeout(2000), fetchData()]).then((res) => {
+            console.log(res)
+            if (res.timeout) {
+                console.log('超时，终止后续操作');
+            } else {
+                console.log('done', res);
+            }
+        });
+    </script>
+    // --- AbortController 用法梳理与案例 ---
+    // 1. 创建 controller
+    // 2. 获取 signal 传给 fetch
+    // 3. 需要中断时调用 controller.abort()
+    // 4. fetch 会抛出 AbortError，可用 try/catch 捕获
+
+    // 案例：fetch 超时自动中断
+    function fetchWithTimeout(url, ms) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal })
+    .then(res => res.json())
+    .finally(() => clearTimeout(timeoutId));
+    }
+
+    // 使用示例
+    fetchWithTimeout('https://jsonplaceholder.typicode.com/todos/1', 100)
+    .then(data => {
+    console.log('fetch 成功', data);
+    })
+    .catch(err => {
+    if (err.name === 'AbortError') {
+    console.log('请求超时被中断');
+    } else {
+    console.log('请求失败', err);
+    }
+    });
+</body>
+
+</html>
